@@ -27,8 +27,8 @@
    padding: 20px;
    z-index:2;
    
-   transition: top .4s ease, opacity .3s .1s ease, width .3s .3s ease-in-out;
-   top: 100%;
+   transition: top .3s ease, opacity .3s .1s ease, width .3s .2s ease-in-out;
+   top: -100%;
    opacity: 0;
    visibility: hidden;
 

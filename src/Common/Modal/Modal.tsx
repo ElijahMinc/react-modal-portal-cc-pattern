@@ -1,4 +1,4 @@
-import React, { MouseEvent, ReactPortal, useEffect, useRef, useState,  } from 'react'
+import React, { MouseEvent, ReactPortal, useEffect, useLayoutEffect, useRef, useState,  } from 'react'
 import { createPortal } from 'react-dom'
 import { Nullable } from '../../types/reset';
 import { ModalProvider } from './Context/ModalContext';
@@ -32,7 +32,6 @@ enum ModalAttrEnum {
 // React. & CompountComponentProps
 export const Modal: ModalProviderType & CompountComponentProps  = ({ onClose, children }: ModalProps): Nullable<ReactPortal> => {
    const overlayMaskNode = useRef<Nullable<HTMLDivElement>>(null);
-
    const [isPortalTargetReady , setIsPortalTargetReady] = useState(false)
    const [isAnimated , setAnimated] = useState(false)
 
@@ -51,7 +50,7 @@ export const Modal: ModalProviderType & CompountComponentProps  = ({ onClose, ch
       onClose()
    }
 
-   useEffect(() => {
+   useLayoutEffect(() => {
       // add overflow: hidden into body tag
       document.body.classList.add(ModalAttrEnum.OVERLAY_MASK_CLASS_BODY);
 
@@ -61,7 +60,7 @@ export const Modal: ModalProviderType & CompountComponentProps  = ({ onClose, ch
    }, [])
 
 
-   useEffect(() => {
+   useLayoutEffect(() => {
       if (!!document) {
          const wrapperElement = document.createElement('div');
          wrapperElement.setAttribute('id', ModalAttrEnum.ID)
@@ -70,14 +69,16 @@ export const Modal: ModalProviderType & CompountComponentProps  = ({ onClose, ch
     }, []);
 
     
-   useEffect(() => {
+    useLayoutEffect(() => {
+   // console.log('isPortalTargetReady INSIDEE', isPortalTargetReady)
+
       const portalTarget = overlayMaskNode.current;
 
       if (portalTarget) {
          document.body.appendChild(portalTarget);
       }
 
-      setIsPortalTargetReady(true);
+      setIsPortalTargetReady(true)
 
       setTimeout(() => {
          setAnimated(true)
@@ -90,25 +91,21 @@ export const Modal: ModalProviderType & CompountComponentProps  = ({ onClose, ch
       };
    }, []);
 
-
-
    const modalContainerClasses = `modal-container ${isAnimated ? 'animated' : ''}`
 
-   return isPortalTargetReady && !!overlayMaskNode.current 
-      ? createPortal(
-            <ModalProvider.Provider value={null}>
-               <div className='modal' onClick={handleClose}>
-                  <div className={modalContainerClasses} data-modal-container>
-                     {children}
-                     <div className='modal__close' onClick={onClose}>X</div>
-                  </div>
-               </div>
-            </ModalProvider.Provider>
-         ,
-         overlayMaskNode.current
-         ) 
-      : 
-      null
+   return isPortalTargetReady ? createPortal(
+      <ModalProvider.Provider value={null}>
+         <div className='modal' onClick={handleClose}>
+            <div className={modalContainerClasses} data-modal-container>
+               {children}
+               <div className='modal__close' onClick={onClose}>X</div>
+            </div>
+         </div>
+      </ModalProvider.Provider>
+   ,
+   overlayMaskNode.current!
+   ) : null
+
 }
 
 Modal.Header = ModalHeader
