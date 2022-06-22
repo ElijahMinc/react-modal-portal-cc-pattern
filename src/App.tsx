@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import { Modal } from './Common/Modal/Modal';
 
 function App() {
+
+  const [showModal1, setShowModal1] = useState(false)
+
+
+  useEffect(() => {
+    
+
+    return () => {
+      console.log('unmount')
+    }
+  }, [])
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+      <div className="App">
+        {showModal1 && (
+          <Modal onClose={() => setShowModal1(false)}>
+            <Modal.Header>
+              <h1>Header</h1>
+            </Modal.Header>
+            <Modal.Body>Body</Modal.Body>
+            <Modal.Footer>Footer</Modal.Footer>
+          </Modal>
+        )}
+          <button onClick={() => setShowModal1(true)}>Show Modal1</button>
+      </div>
+  ) 
 }
 
 export default App;
